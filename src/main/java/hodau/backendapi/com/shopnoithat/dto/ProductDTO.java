@@ -3,6 +3,10 @@ package hodau.backendapi.com.shopnoithat.dto;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import javax.persistence.Transient;
+
+import org.springframework.web.multipart.MultipartFile;
+
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,7 +20,10 @@ public class ProductDTO {
     private String description;
     private BigDecimal price;
     private int stockQuantity;
-    private String imageUrl;
+   @Transient
+    private MultipartFile imageUrl; 
+
+    private String imageUrlPath;    
     private Long categoryId;
     private String status;
     private Long createdBy;
@@ -27,7 +34,7 @@ public class ProductDTO {
     }
 
     public ProductDTO(Long productId, String name, String description, BigDecimal price, int stockQuantity,
-            String imageUrl, Long categoryId, String status, Long createdBy, LocalDateTime createdAt,
+    MultipartFile imageUrl, Long categoryId, String status, Long createdBy, LocalDateTime createdAt,
             LocalDateTime updatedAt) {
         this.productId = productId;
         this.name = name;
