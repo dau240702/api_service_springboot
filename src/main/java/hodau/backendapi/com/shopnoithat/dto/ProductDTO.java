@@ -34,14 +34,14 @@ public class ProductDTO {
     }
 
     public ProductDTO(Long productId, String name, String description, BigDecimal price, int stockQuantity,
-    MultipartFile imageUrl, Long categoryId, String status, Long createdBy, LocalDateTime createdAt,
+    String imageUrlPath, Long categoryId, String status, Long createdBy, LocalDateTime createdAt,
             LocalDateTime updatedAt) {
         this.productId = productId;
         this.name = name;
         this.description = description;
         this.price = price;
         this.stockQuantity = stockQuantity;
-        this.imageUrl = imageUrl;
+        this.imageUrlPath = imageUrlPath;
         this.categoryId = categoryId;
         this.status = status;
         this.createdBy = createdBy;
