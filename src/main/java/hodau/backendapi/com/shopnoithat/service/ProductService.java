@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import hodau.backendapi.com.shopnoithat.common.ResourceNotFoundException;
 import hodau.backendapi.com.shopnoithat.dto.ProductDTO;
@@ -30,7 +32,7 @@ public class ProductService {
     @Autowired
     private FileStorageService fileStorageService;
 
-    public ProductDTO addProduct(ProductDTO productDTO) throws IOException {
+    public ProductDTO addProduct(ProductDTO productDTO, MultipartFile file) throws IOException {
         Product product = new Product();
         product.setName(productDTO.getName());
         product.setDescription(productDTO.getDescription());
@@ -43,18 +45,19 @@ public class ProductService {
         product.setUpdatedAt(LocalDateTime.now());
 
         // Xử lý tải lên hình ảnh
-        if (productDTO.getImageUrl() != null && !productDTO.getImageUrl().isEmpty()) {
-            String imageUrl = fileStorageService.storeFile(productDTO.getImageUrl());
+        if (file != null && !file.isEmpty()) {
+            String imageUrl = fileStorageService.storeFile(file);
             product.setImageUrl(imageUrl);
         }
 
         product = productRepository.save(product);
-        return productRepository.findProductDTOById(product.getProductId());
+        return toDTO(product);
     }
 
-    public ProductDTO updateProduct(Long productId, ProductDTO productDTO) throws IOException {
+    public ProductDTO updateProduct(Long productId, ProductDTO productDTO, MultipartFile file) throws IOException {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+
         product.setName(productDTO.getName());
         product.setDescription(productDTO.getDescription());
         product.setPrice(productDTO.getPrice());
@@ -64,13 +67,16 @@ public class ProductService {
         product.setUpdatedAt(LocalDateTime.now());
 
         // Xử lý cập nhật ảnh
-        if (productDTO.getImageUrl() != null && !productDTO.getImageUrl().isEmpty()) {
-            String imageUrlPath = fileStorageService.storeFile(productDTO.getImageUrl());
-            product.setImageUrl(imageUrlPath);
+        if (file != null && !file.isEmpty()) {
+            String imageUrl = fileStorageService.storeFile(file);
+            product.setImageUrl(imageUrl);
+        } else if (productDTO.getImageUrlPath() != null && !productDTO.getImageUrlPath().isEmpty()) {
+            // Giữ nguyên URL hình ảnh hiện tại nếu không có file mới được tải lên
+            product.setImageUrl(productDTO.getImageUrlPath());
         }
 
         product = productRepository.save(product);
-        return productRepository.findProductDTOById(product.getProductId());
+        return toDTO(product);
     }
 
     public void deleteProduct(Long productId) {
@@ -82,24 +88,27 @@ public class ProductService {
 
     public List<ProductDTO> getAllProducts() {
         List<Product> products = productRepository.findAll();
-        List<ProductDTO> productDTOs = new ArrayList<>();
-        for (Product product : products) {
-            ProductDTO productDTO = new ProductDTO();
-            productDTO.setProductId(product.getProductId());
-            productDTO.setName(product.getName());
-            productDTO.setDescription(product.getDescription());
-            productDTO.setPrice(product.getPrice());
-            productDTO.setStockQuantity(product.getStockQuantity());
-            productDTO.setImageUrlPath(product.getImageUrl());
-            productDTO.setCategoryId(product.getCategory().getCategoryId());
-            productDTO.setStatus(product.getStatus());
-            if (product.getCreatedBy() != null) {
-                productDTO.setCreatedBy(product.getCreatedBy().getUserId());
-            }
-            productDTO.setCreatedAt(product.getCreatedAt());
-            productDTO.setUpdatedAt(product.getUpdatedAt());
-            productDTOs.add(productDTO);
-        }
+        List<ProductDTO> productDTOs = products.stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
         return productDTOs;
+    }
+
+    private ProductDTO toDTO(Product product) {
+        String categoryName = (product.getCategory() != null) ? product.getCategory().getName() : "";
+        Long categoryId = (product.getCategory() != null) ? product.getCategory().getCategoryId() : null;
+        return new ProductDTO(
+                product.getProductId(),
+                product.getName(),
+                product.getDescription(),
+                product.getPrice(),
+                product.getStockQuantity(),
+                product.getImageUrl(),
+                categoryName,
+                categoryId,
+                product.getStatus(),
+                (product.getCreatedBy() != null) ? product.getCreatedBy().getUserId() : null,
+                product.getCreatedAt(),
+                product.getUpdatedAt());
     }
 }
