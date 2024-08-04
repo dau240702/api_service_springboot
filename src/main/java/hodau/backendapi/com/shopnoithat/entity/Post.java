@@ -6,15 +6,21 @@ import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
+import javax.persistence .GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+
 @Entity
+@Data
+@Setter
+@Getter
 @Table(name = "post")
 public class Post {
 
@@ -25,6 +31,9 @@ public class Post {
 
     @Column(name = "title")
     private String title;
+
+    @Column(name = "excerpt_image")
+    private String excerptImage;
 
     @Column(name = "content", columnDefinition = "TEXT")
     private String content;
@@ -51,8 +60,8 @@ public class Post {
     @Column(name = "view_count")
     private int viewcount;
 
-    @ManyToMany
-    @JoinTable(name = "category_post", joinColumns = @JoinColumn(name = "post_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
-    private Set<Category> categories;
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
 
 }

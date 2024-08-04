@@ -62,6 +62,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/categories/**").permitAll()
                 .antMatchers("/uploads/**").permitAll()
                 .antMatchers("/contacts/**").permitAll()
+                .antMatchers("/post/**").permitAll()    
 
                         // checklist(7)
                         // hasRole("ADMIN")
