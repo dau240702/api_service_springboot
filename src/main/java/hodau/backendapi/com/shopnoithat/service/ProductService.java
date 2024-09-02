@@ -2,7 +2,6 @@ package hodau.backendapi.com.shopnoithat.service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -97,6 +96,7 @@ public class ProductService {
     private ProductDTO toDTO(Product product) {
         String categoryName = (product.getCategory() != null) ? product.getCategory().getName() : "";
         Long categoryId = (product.getCategory() != null) ? product.getCategory().getCategoryId() : null;
+        String createbyName = (product.getCreatedBy() != null) ? product.getCreatedBy().getFullName() : "";
         return new ProductDTO(
                 product.getProductId(),
                 product.getName(),
@@ -108,6 +108,7 @@ public class ProductService {
                 categoryId,
                 product.getStatus(),
                 (product.getCreatedBy() != null) ? product.getCreatedBy().getUserId() : null,
+                createbyName,
                 product.getCreatedAt(),
                 product.getUpdatedAt());
     }

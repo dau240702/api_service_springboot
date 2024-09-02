@@ -1,8 +1,9 @@
 package hodau.backendapi.com.shopnoithat.dto;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.io.Serializable;
+
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,14 +22,13 @@ public class ProductDTO implements Serializable {
     private String categoryName;
     private String status;
     private Long createdBy;
+    private String createbyName;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public ProductDTO() {
-    }
 
     public ProductDTO(Long productId, String name, String description, BigDecimal price, int stockQuantity,
-            String imageUrlPath, String categoryName, Long categoryId, String status, Long createdBy,
+            String imageUrlPath, String categoryName, Long categoryId, String status, Long createdBy,String createbyName,
             LocalDateTime createdAt,
             LocalDateTime updatedAt) {
         this.productId = productId;
@@ -41,6 +41,7 @@ public class ProductDTO implements Serializable {
         this.categoryId = categoryId;
         this.status = status;
         this.createdBy = createdBy;
+        this.createbyName=createbyName;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -60,6 +61,7 @@ public class ProductDTO implements Serializable {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
+
 
     public String getImageFileName() {
         return imageUrlPath;
