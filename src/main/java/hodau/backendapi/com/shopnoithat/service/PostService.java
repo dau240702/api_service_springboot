@@ -30,7 +30,14 @@ public class PostService {
 
     @Autowired
     private FileStorageService fileStorageService;
+    public void incrementViewCount(Long postId) {
+        Post post = postRepository.findById(postId)
+            .orElseThrow(() -> new ResourceNotFoundException("Post not found"));
 
+        post.setViewcount(post.getViewcount() + 1);
+        postRepository.save(post);
+    }
+    
     public PostDTO addPost(PostDTO postDTO, MultipartFile file) throws IOException {
         Post post = new Post();
         post.setTitle(postDTO.getTitle());
