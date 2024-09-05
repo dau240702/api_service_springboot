@@ -1,5 +1,10 @@
 package hodau.backendapi.com.shopnoithat.service;
 
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -10,11 +15,6 @@ import hodau.backendapi.com.shopnoithat.entity.Post;
 import hodau.backendapi.com.shopnoithat.responsitory.CategoryRepository;
 import hodau.backendapi.com.shopnoithat.responsitory.PostRepository;
 import hodau.backendapi.com.shopnoithat.responsitory.UserRepository;
-
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class PostService {
@@ -30,7 +30,14 @@ public class PostService {
 
     @Autowired
     private FileStorageService fileStorageService;
+    public void incrementViewCount(Long postId) {
+        Post post = postRepository.findById(postId)
+            .orElseThrow(() -> new ResourceNotFoundException("Post not found"));
 
+        post.setViewcount(post.getViewcount() + 1);
+        postRepository.save(post);
+    }
+    
     public PostDTO addPost(PostDTO postDTO, MultipartFile file) throws IOException {
         Post post = new Post();
         post.setTitle(postDTO.getTitle());
@@ -104,12 +111,14 @@ public class PostService {
     private PostDTO toDTO(Post post) {
         String categoryName = (post.getCategory() != null) ? post.getCategory().getName() : "";
         Long categoryId = (post.getCategory() != null) ? post.getCategory().getCategoryId() : null;
+        String createbyName = (post.getCreatedBy() != null) ? post.getCreatedBy().getFullName() : "";
         return new PostDTO(
                 post.getPostId(),
                 post.getTitle(),
                 post.getExcerptImage(),
                 post.getContent(),
                 (post.getCreatedBy() != null) ? post.getCreatedBy().getUserId() : null,
+                createbyName,
                 post.getFromDate(),
                 post.getToDate(),
                 post.getCreatedAt(),

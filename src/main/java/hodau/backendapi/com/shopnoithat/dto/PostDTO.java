@@ -19,6 +19,7 @@ public class PostDTO {
     private String excerptImage;
     private String content;
     private Long createdBy;
+    private String createbyName;
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime fromDate;
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -51,7 +52,7 @@ public class PostDTO {
         this.categoryId = categoryId;
     }
 
-    public PostDTO(Long postId, String title, String excerptImage, String content, Long createdBy,
+    public PostDTO(Long postId, String title, String excerptImage, String content, Long createdBy,String createbyName,
             LocalDateTime fromDate, LocalDateTime toDate, LocalDateTime createdAt, LocalDateTime updatedAt,
             String status, int viewcount, Long categoryId, String categoryName) {
         this.postId = postId;
@@ -59,6 +60,7 @@ public class PostDTO {
         this.excerptImage = excerptImage;
         this.content = content;
         this.createdBy = createdBy;
+        this.createbyName=createbyName;
         this.fromDate = fromDate;
         this.toDate = toDate;
         this.createdAt = createdAt;
