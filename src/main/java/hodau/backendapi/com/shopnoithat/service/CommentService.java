@@ -61,6 +61,11 @@ public class CommentService {
         return comments.stream().map(this::toDTO).collect(Collectors.toList());
     }
 
+    public List<CommentDTO> getCommentsByPostId(Long postId) {
+        List<Comment> comments = commentRepository.findByPost_PostId(postId);
+        return comments.stream().map(this::toDTO).collect(Collectors.toList());
+    }
+
     public CommentDTO getCommentById(Long commentId) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new ResourceNotFoundException("Comment not found"));
